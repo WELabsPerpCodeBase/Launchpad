@@ -37,7 +37,7 @@ contract BondingCurve is ReentrancyGuard, IBondingCurve {
     function initialize(address _token, address _migrator) external {
         require(msg.sender == factory, 'FORBIDDEN');
         require(initialized == 0, 'already initialized');
-        require(_token != address(0), 'zero adderss');
+        require(_token != address(0), 'zero address');
         token = _token;
         migrator = _migrator;
         initialized = 1;

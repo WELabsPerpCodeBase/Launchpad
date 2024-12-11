@@ -82,6 +82,11 @@ contract Launchpad is Ownable2Step {
         require(msg.value >= createFees, "Must send 0.001 ether");
         (token, curve) = _launchpad(name, symbol, url);
         TransferHelper.safeTransferETH(feeTo, createFees);
+        // Refund excess ETH
+        uint256 excess = msg.value - createFees;
+        if (excess > 0) {
+            TransferHelper.safeTransferETH(msg.sender, excess);
+        }
     }
 
     function launchpadInitialBuy(
@@ -97,10 +102,6 @@ contract Launchpad is Ownable2Step {
         uint256 buyValue = msg.value - createFees;
         require(buyValue != 0, "Must send some ether");
         require(_beneficiaryAddresses.length <= MAX_INITIAL_BUY, "reached the max");
-        require(
-            _beneficiaryAddresses.length == _totalAmounts.length,
-            "BondingCurve: Mismatched lengths"
-        );
 
         uint256 totalAmount = 0;
         for (uint256 i = 0; i < _beneficiaryAddresses.length; i++) {
